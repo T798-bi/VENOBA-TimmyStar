@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Venoba | Confirm Your Order</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#c9a84c;--gold-light:#e8c97a;--gold-dim:rgba(201,168,76,0.12);--bg:#080807;--bg2:#0e0d0b;--text:#f0ece4;--muted:rgba(240,236,228,0.5);--green:#3a7d5c;--red:#a5433a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Montserrat',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+
+#loader{position:fixed;inset:0;background:#000;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1s ease,visibility 1s ease}
+#loader.gone{opacity:0;visibility:hidden}
+.loader-logo{font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:300;color:var(--gold);letter-spacing:16px;animation:logoReveal 1.3s ease forwards}
+.loader-sub{font-size:9px;letter-spacing:6px;color:var(--muted);margin-top:14px;opacity:0;animation:fadeUp 1s .8s ease forwards;text-transform:uppercase}
+@keyframes logoReveal{from{opacity:0;letter-spacing:34px}to{opacity:1;letter-spacing:16px}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+nav{width:100%;max-width:640px;display:flex;justify-content:space-between;align-items:center;padding:28px 24px}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--gold);letter-spacing:8px;text-transform:uppercase}
+nav a{color:var(--muted);text-decoration:none;font-size:9px;letter-spacing:3px;text-transform:uppercase;transition:color .3s}
+nav a:hover{color:var(--gold)}
+
+.wrap{width:100%;max-width:520px;padding:10px 24px 70px;animation:fadeIn .8s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.state-view{display:none}
+.state-view.active{display:block}
+
+.eyebrow{font-size:9px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;text-align:center;margin-bottom:12px}
+.title{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300;text-align:center;margin-bottom:8px;line-height:1.05}
+.title em{color:var(--gold);font-style:italic}
+.subtext{text-align:center;font-size:12px;color:var(--muted);line-height:1.9;margin-bottom:34px}
+.ref-tag{text-align:center;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:34px;text-transform:uppercase}
+.ref-tag b{color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:1px;display:block;margin-top:4px}
+
+.panel{background:var(--bg2);border:1px solid rgba(201,168,76,.18);padding:28px;margin-bottom:20px}
+.panel h3{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:19px;color:var(--gold);margin-bottom:18px;letter-spacing:1px}
+
+.summary-item{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.summary-item span:first-child{color:var(--text)}
+.summary-row{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);padding:6px 0}
+.summary-row.total{font-size:15px;color:var(--text);font-weight:600;border-top:1px solid rgba(201,168,76,.18);margin-top:10px;padding-top:14px}
+.summary-row.total span:last-child{color:var(--gold)}
+
+.field-label{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:block}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-group{margin-bottom:14px}
+.form-group input,.form-group textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.2);color:var(--text);font-family:'Montserrat',sans-serif;font-size:12px;padding:14px 16px;outline:none;transition:border-color .3s}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--gold)}
+.form-group textarea{resize:none;height:80px}
+
+.cod-note{display:flex;gap:12px;align-items:flex-start;background:var(--gold-dim);border:1px solid rgba(201,168,76,.3);padding:16px 18px;font-size:12px;color:var(--gold);line-height:1.7;margin-bottom:24px}
+.cod-note b{display:block;color:var(--text);font-size:13px;margin-bottom:2px}
+
+.due-amount{text-align:center;margin:26px 0}
+.due-amount .label{font-size:9px;letter-spacing:4px;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.due-amount .amount{font-family:'Cormorant Garamond',serif;font-size:44px;color:var(--gold)}
+
+.actions{display:flex;flex-direction:column;gap:12px}
+.btn{padding:16px;border:none;font-family:'Montserrat',sans-serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all .3s}
+.btn-primary{background:var(--gold);color:#000}
+.btn-primary:hover{background:var(--gold-light)}
+.btn-outline{background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--text)}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+.btn-danger{background:transparent;border:1px solid rgba(165,67,58,.35);color:#e2766b}
+.btn-danger:hover{background:rgba(165,67,58,.12)}
+
+.info-line{display:flex;gap:10px;font-size:11px;color:var(--muted);line-height:1.8;margin-top:20px}
+
+.result-icon{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px}
+.result-icon.confirmed{background:var(--gold);color:#000}
+.result-icon.cancelled{background:transparent;border:1px solid rgba(165,67,58,.4);color:#e2766b}
+.result-box{text-align:center;background:var(--bg2);border:1px solid rgba(201,168,76,.18);padding:44px 30px}
+.result-box h2{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:30px;margin-bottom:12px}
+.result-box h2 em{color:var(--gold);font-style:italic}
+.result-box p{font-size:12px;color:var(--muted);line-height:1.9;margin-bottom:26px}
+
+footer{text-align:center;padding:24px;font-size:11px;color:rgba(240,236,228,.3)}
+
+@media(max-width:480px){
+  .form-row{grid-template-columns:1fr}
+  .panel{padding:22px}
+}
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <div class="loader-logo">VENOBA</div>
+  <div class="loader-sub">Confirming your order details</div>
+</div>
+
+<nav>
+  <div class="nav-logo">VENOBA</div>
+  <a href="index.html">← Back to store</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- CONFIRM STATE -->
+  <div id="confirmState" class="state-view active">
+    <div class="eyebrow">Pay On Delivery</div>
+    <div class="title">Confirm Your <em>Order</em></div>
+    <div class="subtext">Review your order below. You'll pay in cash or by card when it arrives at your door.</div>
+    <div class="ref-tag">Order reference<b id="refDisplay">—</b></div>
+
+    <div class="panel">
+      <h3>Order Summary</h3>
+      <div id="itemsList"></div>
+      <div class="summary-row"><span>Subtotal</span><span id="sSubtotal">₦0</span></div>
+      <div class="summary-row"><span>Delivery Fee</span><span id="sDelivery">₦0</span></div>
+      <div class="summary-row" id="sDiscountRow" style="display:none"><span>Discount</span><span id="sDiscount">-₦0</span></div>
+      <div class="summary-row total"><span>Total Due</span><span id="sTotal">₦0</span></div>
+    </div>
+
+    <div class="panel">
+      <h3>Delivery Details</h3>
+      <div class="form-group">
+        <label class="field-label">Full Name</label>
+        <input type="text" id="dName">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="field-label">Phone Number</label>
+          <input type="text" id="dPhone">
+        </div>
+        <div class="form-group">
+          <label class="field-label">Email (optional)</label>
+          <input type="text" id="dEmail">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="field-label">Delivery Address</label>
+        <input type="text" id="dAddress">
+      </div>
+      <div class="form-group">
+        <label class="field-label">Delivery Notes (optional)</label>
+        <textarea id="dNotes"></textarea>
+      </div>
+    </div>
+
+    <div class="cod-note">
+      💵
+      <div><b>Pay on delivery</b>Please have the exact amount ready in cash, or your card, for our rider when your order arrives. Nothing is charged now.</div>
+    </div>
+
+    <div class="due-amount">
+      <div class="label">Amount to pay on arrival</div>
+      <div class="amount" id="dueAmount">₦0</div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" onclick="confirmOrder()">Confirm Order</button>
+      <button class="btn btn-danger" onclick="cancelOrder()">Cancel order</button>
+    </div>
+
+    <div class="info-line">✉️ We'll prepare your order once confirmed. Estimated delivery: 35–50 minutes.</div>
+  </div>
+
+  <!-- CONFIRMED STATE -->
+  <div id="confirmedState" class="state-view">
+    <div class="result-box">
+      <div class="result-icon confirmed">✓</div>
+      <h2>Order <em>Confirmed</em></h2>
+      <p>Your order is being prepared. Pay in cash or by card when it arrives — estimated delivery 35–50 minutes.</p>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="notifyWhatsApp()">Confirm on WhatsApp</button>
+        <a class="btn btn-outline" href="index.html" style="display:block;text-align:center;text-decoration:none;box-sizing:border-box">Back to store</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- CANCELLED STATE -->
+  <div id="cancelledState" class="state-view">
+    <div class="result-box">
+      <div class="result-icon cancelled">✕</div>
+      <h2>Order <em>Cancelled</em></h2>
+      <p>Your order has been cancelled. Nothing was charged.</p>
+      <a class="btn btn-outline" href="index.html" style="display:block;text-align:center;text-decoration:none;box-sizing:border-box">Back to store</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>Venoba Websites &nbsp;|&nbsp; 09049414101 &nbsp;|&nbsp; @timmystar14</footer>
+
+<script>
+const params=new URLSearchParams(window.location.search);
+let order=null;
+
+function loadOrderFromURL(){
+  const items=params.get('items') ? JSON.parse(decodeURIComponent(params.get('items'))) : [];
+  order={
+    reference: params.get('ref') || ('VNB-'+Date.now().toString(36).toUpperCase()),
+    customer:{
+      name: params.get('name') || '',
+      phone: params.get('phone') || '',
+      email: params.get('email') || '',
+      address: params.get('address') || '',
+      notes: params.get('notes') || ''
+    },
+    items,
+    subtotal: Number(params.get('subtotal')||0),
+    delivery: Number(params.get('delivery')||0),
+    discount: Number(params.get('discount')||0),
+    total: Number(params.get('total')||0)
+  };
+
+  document.getElementById('refDisplay').textContent=order.reference;
+  document.getElementById('dName').value=order.customer.name;
+  document.getElementById('dPhone').value=order.customer.phone;
+  document.getElementById('dEmail').value=order.customer.email;
+  document.getElementById('dAddress').value=order.customer.address;
+  document.getElementById('dNotes').value=order.customer.notes;
+
+  document.getElementById('itemsList').innerHTML=order.items.map(i=>
+    `<div class="summary-item"><span>${i.name} ×${i.qty}</span><span>₦${(i.price*i.qty).toLocaleString()}</span></div>`
+  ).join('');
+
+  document.getElementById('sSubtotal').textContent='₦'+order.subtotal.toLocaleString();
+  document.getElementById('sDelivery').textContent=order.delivery===0?'Free':'₦'+order.delivery.toLocaleString();
+  document.getElementById('sTotal').textContent='₦'+order.total.toLocaleString();
+  document.getElementById('dueAmount').textContent='₦'+order.total.toLocaleString();
+
+  if(order.discount>0){
+    document.getElementById('sDiscountRow').style.display='flex';
+    document.getElementById('sDiscount').textContent='-₦'+order.discount.toLocaleString();
+  }
+}
+
+window.onload=()=>{
+  loadOrderFromURL();
+  setTimeout(()=>document.getElementById('loader').classList.add('gone'),900);
+};
+
+function showState(id){
+  document.querySelectorAll('.state-view').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function confirmOrder(){
+  order.customer.name=document.getElementById('dName').value.trim();
+  order.customer.phone=document.getElementById('dPhone').value.trim();
+  order.customer.email=document.getElementById('dEmail').value.trim();
+  order.customer.address=document.getElementById('dAddress').value.trim();
+  order.customer.notes=document.getElementById('dNotes').value.trim();
+
+  if(!order.customer.name || !order.customer.phone || !order.customer.address){
+    alert('Please fill in your name, phone and delivery address.');
+    return;
+  }
+
+  order.method='delivery';
+  order.status='confirmed';
+  order.date=new Date().toISOString();
+
+  const orders=JSON.parse(localStorage.getItem('venoba_orders')||'[]');
+  const idx=orders.findIndex(o=>o.reference===order.reference);
+  if(idx>-1) orders[idx]=order; else orders.unshift(order);
+  localStorage.setItem('venoba_orders', JSON.stringify(orders));
+
+  showState('confirmedState');
+}
+
+function cancelOrder(){
+  if(confirm('Cancel this order? Nothing will be charged.')){
+    showState('cancelledState');
+  }
+}
+
+function notifyWhatsApp(){
+  const phone='2349049414101';
+  let msg=`Hello Venoba! 🍽️ New order *${order.reference}* (Pay on Delivery)%0A%0A`;
+  order.items.forEach(i=>msg+=`• ${i.name} ×${i.qty} — ₦${(i.price*i.qty).toLocaleString()}%0A`);
+  msg+=`%0ASubtotal: ₦${order.subtotal.toLocaleString()}%0ADelivery: ${order.delivery===0?'Free':'₦'+order.delivery.toLocaleString()}`;
+  if(order.discount>0) msg+=`%0ADiscount: -₦${order.discount.toLocaleString()}`;
+  msg+=`%0A*Total (Pay on delivery): ₦${order.total.toLocaleString()}*%0A%0AName: ${order.customer.name}%0APhone: ${order.customer.phone}%0AAddress: ${order.customer.address}`;
+  if(order.customer.notes) msg+=`%0ANotes: ${order.customer.notes}`;
+  window.open(`https://wa.me/${phone}?text=${msg}`,'_blank');
+}
+</script>
+
+</body>
+</html>
