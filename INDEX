@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Venoba | Complete Your Payment</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body{
+    background:#0a0a0a;
+    color:#fff;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+#loader{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:#000;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    z-index:9999;
+}
+
+#loader h1{
+    color:#c9a84c;
+    font-size:40px;
+    letter-spacing:3px;
+}
+
+#loader span{
+    margin-top:10px;
+    opacity:0.7;
+}
+
+.fade-out{
+    animation:fadeOut 1s forwards;
+}
+
+@keyframes fadeOut{
+    to{
+        opacity:0;
+        visibility:hidden;
+    }
+}
+
+nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    width:100%;
+    max-width:900px;
+    padding:20px 24px;
+}
+
+nav h2{
+    color:#c9a84c;
+}
+
+nav a{
+    color:#fff;
+    opacity:0.7;
+    text-decoration:none;
+    font-size:14px;
+}
+
+.wrap{
+    width:100%;
+    max-width:480px;
+    padding:10px 20px 60px;
+    animation:fadeIn .8s ease;
+}
+
+@keyframes fadeIn{
+    from{ opacity:0; transform:translateY(20px); }
+    to{ opacity:1; transform:translateY(0); }
+}
+
+.status-header{
+    text-align:center;
+    margin-bottom:24px;
+}
+
+.status-icon{
+    width:56px;
+    height:56px;
+    border-radius:50%;
+    background:#f4a261;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto 16px;
+    font-size:26px;
+    transition:.3s;
+}
+
+.status-header h1{
+    font-size:22px;
+    margin-bottom:8px;
+}
+
+.status-header p{
+    opacity:0.7;
+    font-size:14px;
+    line-height:1.5;
+}
+
+.status-header .timer{
+    color:#c9a84c;
+    font-weight:600;
+}
+
+.order-ref{
+    text-align:center;
+    font-size:12px;
+    opacity:0.6;
+    margin-bottom:10px;
+}
+
+.order-total{
+    text-align:center;
+    margin:20px 0;
+    font-size:15px;
+    opacity:0.85;
+}
+
+.order-total span{
+    color:#c9a84c;
+    font-weight:600;
+    font-size:17px;
+}
+
+.pay-card{
+    background:#111;
+    border-radius:18px;
+    padding:24px;
+    margin-bottom:20px;
+}
+
+.field{
+    margin-bottom:18px;
+}
+
+.field label{
+    display:block;
+    font-size:12px;
+    opacity:0.6;
+    margin-bottom:6px;
+}
+
+.field-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+}
+
+.field-row strong{
+    font-size:17px;
+    letter-spacing:0.5px;
+}
+
+.copy-btn{
+    background:#1c1c1c;
+    border:1px solid #2a2a2a;
+    color:#c9a84c;
+    padding:8px 12px;
+    border-radius:10px;
+    font-size:12px;
+    cursor:pointer;
+    transition:.2s;
+    white-space:nowrap;
+}
+
+.copy-btn:hover{
+    background:#c9a84c;
+    color:#0a0a0a;
+}
+
+.copy-btn.copied{
+    background:#f4a261;
+    color:#0a0a0a;
+}
+
+.notice{
+    display:flex;
+    gap:8px;
+    align-items:flex-start;
+    background:#1a1410;
+    border:1px solid rgba(244,162,97,0.3);
+    color:#f4a261;
+    padding:12px 14px;
+    border-radius:12px;
+    font-size:13px;
+    line-height:1.4;
+    margin-top:6px;
+}
+
+.actions{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.btn{
+    padding:15px;
+    border:none;
+    border-radius:14px;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.btn-primary{
+    background:#c9a84c;
+    color:#0a0a0a;
+}
+
+.btn-primary:hover{
+    background:#ffb97d;
+}   
+
+.btn-outline{
+    background:transparent;
+    border:1px solid #2a2a2a;
+    color:#fff;
+}
+
+.btn-outline:hover{
+    border-color:#f4a261;
+    color:#f4a261;
+}
+
+.btn-danger{
+    background:transparent;
+    color:#e0665c;
+    border:1px solid rgba(224,102,92,0.3);
+}
+
+.btn-danger:hover{
+    background:rgba(224,102,92,0.1);
+}
+
+.info-line{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    font-size:13px;
+    opacity:0.7;
+    line-height:1.5;
+    margin-top:18px;
+}
+
+.state-view{
+    display:none;
+}
+.state-view.active{
+    display:block;
+}
+
+.result-icon{
+    width:64px;
+    height:64px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto 18px;
+    font-size:30px;
+}
+
+.result-icon.paid{ background:#c9a84c; color:#0a0a0a; }
+.result-icon.cancelled{ background:#1c1c1c; color:#e0665c; border:1px solid rgba(224,102,92,0.4); }
+
+.result-box{
+    text-align:center;
+    background:#111;
+    border-radius:18px;
+    padding:40px 24px;
+}
+
+.result-box h2{
+    margin-bottom:10px;
+}
+
+.result-box p{
+    opacity:0.7;
+    font-size:14px;
+    margin-bottom:24px;
+    line-height:1.5;
+}
+
+footer{
+    text-align:center;
+    padding:24px;
+    font-size:13px;
+    opacity:0.5;
+}
+
+@media(max-width:480px){
+    .wrap{ padding:10px 16px 50px; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="loader">
+    <h1>Venoba</h1>
+    <span>Preparing your payment details...</span>
+</div>
+
+<nav>
+    <h2>Venoba</h2>
+    <a href="#" onclick="return false;">Need help?</a>
+</nav>
+
+<div class="wrap">
+
+    <div id="awaitingState" class="state-view active">
+        <div class="status-header">
+            <div class="status-icon" id="statusIcon">⏳</div>
+            <h1>Awaiting payment</h1>
+            <p>Complete your bank transfer within <span class="timer" id="countdown">24:00:00</span> to confirm your order.</p>
+        </div>
+
+        <div class="order-ref" id="orderRefDisplay"></div>
+
+        <div class="order-total">
+            Order total &nbsp; <span id="orderTotalDisplay">₦8,000</span>
+        </div>
+
+        <div class="pay-card">
+
+            <div class="field">
+                <label>Account number</label>
+                <div class="field-row">
+                    <strong id="accountNumber">1920028778</strong>
+                    <button class="copy-btn" onclick="copyValue('accountNumber', this)">Copy</button>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Bank name</label>
+                <div class="field-row">
+                    <strong id="bankName">Access Bank</strong>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Beneficiary name</label>
+                <div class="field-row">
+                    <strong id="beneficiaryName">Venoba Foods Ltd</strong>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Amount to pay</label>
+                <div class="field-row">
+                    <strong id="amountToPay">₦8,000</strong>
+                    <button class="copy-btn" onclick="copyValue('amountToPay', this)">Copy</button>
+                </div>
+                <div class="notice">⚠️ Transfer the exact amount shown, or your payment may not be matched automatically.</div>
+            </div>
+
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary" onclick="markAsPaid()">I've made this payment</button>
+            <button class="btn btn-outline" onclick="alert('This demo only supports bank transfer. Card payment would plug in here.')">Change payment method</button>
+            <button class="btn btn-danger" onclick="cancelOrder()">Cancel order</button>
+        </div>
+
+        <div class="info-line">
+            ✉️ We'll send a confirmation email once your payment is verified. If it fails or expires, your order is automatically cancelled and nothing is charged.
+        </div>
+    </div>
+
+    <div id="paidState" class="state-view">
+        <div class="result-box">
+            <div class="result-icon paid">✓</div>
+            <h2>Payment received</h2>
+            <p>Thanks — we've marked your order as paid and it's now being prepared. You'll get a confirmation email shortly.</p>
+            <button class="btn btn-primary" onclick="resetDemo()">Back to store</button>
+        </div>
+    </div>
+
+    <div id="cancelledState" class="state-view">
+        <div class="result-box">
+            <div class="result-icon cancelled">✕</div>
+            <h2>Order cancelled</h2>
+            <p>Your order has been cancelled and no payment was taken. Your items are still saved in your cart.</p>
+            <button class="btn btn-outline" onclick="resetDemo()">Start over</button>
+        </div>
+    </div>
+
+</div>
+
+<footer>Venoba Websites &nbsp;|&nbsp; 09049414101 &nbsp;|&nbsp; @timmystar14</footer>
+
+<script>
+/* ---- READ ORDER FROM URL (no network call — instant) ---- */
+const urlParams = new URLSearchParams(window.location.search);
+const refParam = urlParams.get('ref');
+const amountParam = urlParams.get('amount');
+
+function applyOrderFromURL(){
+    if (amountParam){
+        const amt = Number(amountParam);
+        if (!isNaN(amt) && amt > 0){
+            const formatted = '₦' + amt.toLocaleString();
+            document.getElementById('amountToPay').innerText = formatted;
+            document.getElementById('orderTotalDisplay').innerText = formatted;
+        }
+    }
+    if (refParam){
+        document.getElementById('orderRefDisplay').textContent = 'Order reference: ' + refParam;
+    }
+}
+
+/* ---- LOADER ---- */
+window.onload = () => {
+    applyOrderFromURL();
+    setTimeout(() => {
+        document.getElementById("loader").classList.add("fade-out");
+    }, 1200);
+    startCountdown();
+};
+
+/* ---- COPY TO CLIPBOARD ---- */
+function copyValue(id, btn){
+    const text = document.getElementById(id).innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        const original = btn.innerText;
+        btn.innerText = "Copied";
+        btn.classList.add("copied");
+        setTimeout(() => {
+            btn.innerText = original;
+            btn.classList.remove("copied");
+        }, 1500);
+    }).catch(() => {
+        alert("Copied: " + text);
+    });
+}
+
+/* ---- COUNTDOWN TIMER (24h from page load) ---- */
+let countdownInterval;
+function startCountdown(){
+    const durationMs = 24 * 60 * 60 * 1000;
+    const deadline = Date.now() + durationMs;
+
+    countdownInterval = setInterval(() => {
+        const remaining = deadline - Date.now();
+        if (remaining <= 0){
+            clearInterval(countdownInterval);
+            document.getElementById("countdown").innerText = "00:00:00";
+            cancelOrder(true);
+            return;
+        }
+        const h = Math.floor(remaining / 3600000);
+        const m = Math.floor((remaining % 3600000) / 60000);
+        const s = Math.floor((remaining % 60000) / 1000);
+        document.getElementById("countdown").innerText =
+            String(h).padStart(2,'0') + ":" +
+            String(m).padStart(2,'0') + ":" +
+            String(s).padStart(2,'0');
+    }, 1000);
+}
+
+/* ---- STATE SWITCHING ---- */
+function showState(id){
+    document.querySelectorAll(".state-view").forEach(el => el.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+}
+
+function markAsPaid(){
+    clearInterval(countdownInterval);
+    showState("paidState");
+}
+
+function cancelOrder(expired){
+    clearInterval(countdownInterval);
+    if (expired){
+        showState("cancelledState");
+    } else {
+        if (confirm("Cancel this order? Your payment window will close and nothing will be charged.")){
+            showState("cancelledState");
+        }
+    }
+}
+
+function resetDemo(){
+    showState("awaitingState");
+    document.getElementById("countdown").innerText = "24:00:00";
+    startCountdown();
+}
+</script>
+
+</body>
+</html>
